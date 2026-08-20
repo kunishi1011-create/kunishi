@@ -1,0 +1,65 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# VS Code
+.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+build/
+.pub-cache/
+.pub/
+
+# Web build output
+/build/web/
+
+# Android related
+**/android/**/gradle-wrapper.jar
+**/android/.gradle
+**/android/captures/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/local.properties
+**/android/**/GeneratedPluginRegistrant.java
+**/android/key.properties
+*.jks
+*.keystore
+
+# Symbolication / Obfuscation
+app.*.symbols
+app.*.map.json
+
+# Environment variables (APIキー等はここで管理し、コードに直接書かない)
+.env
+.env.local
+.env.*.local
+
+# Firebase / Supabase credentials
+google-services.json
+firebase-admin-sdk.json
+**/serviceAccountKey.json
+
+# Local preview server helper
+serve.py
+server.log
+flutter.log

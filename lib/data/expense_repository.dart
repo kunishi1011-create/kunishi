@@ -27,4 +27,8 @@ abstract class ExpenseRepository {
   Future<Expense> createExpense(Expense expense);
   Future<Expense> updateExpense(Expense expense);
   Future<void> deleteExpense(String id);
+
+  /// 検証用：保存データを破棄して初期テストデータに戻す。
+  /// プロトタイプで動作確認を繰り返すために用意している。
+  Future<void> resetToSeed();
 }

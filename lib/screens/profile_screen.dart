@@ -3,7 +3,9 @@ import 'package:provider/provider.dart';
 import '../core/formatters.dart';
 import '../core/responsive.dart';
 import '../core/theme.dart';
+import '../data/expense_repository.dart';
 import '../providers/auth_provider.dart';
+import '../providers/expense_provider.dart';
 import 'login_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -99,6 +101,18 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
 
+            // データ初期化（検証用）
+            OutlinedButton.icon(
+              onPressed: () => _confirmReset(context),
+              icon: const Icon(Icons.restart_alt, size: 20),
+              label: const Text('テストデータを初期状態に戻す'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppTheme.textSub,
+                side: const BorderSide(color: AppTheme.border, width: 1.5),
+              ),
+            ),
+            const SizedBox(height: 10),
+
             // ログアウト
             OutlinedButton.icon(
               onPressed: () async {
@@ -156,7 +170,7 @@ class ProfileScreen extends StatelessWidget {
                           color: AppTheme.textSub)),
                   SizedBox(height: 6),
                   Text(
-                    'STEP1：画面と画面遷移の確認用（データはブラウザを再読み込みすると初期状態に戻ります）',
+                    'STEP2：端末内データベース（Hive）に保存しています。申請・承認・精算の内容はブラウザを再読み込みしても保持されます。',
                     style: TextStyle(
                         fontSize: 12,
                         color: AppTheme.textSub,
@@ -168,6 +182,54 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 24),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// 検証用のデータ初期化。
+/// 保存済みデータを破棄してテストデータを再投入する。
+Future<void> _confirmReset(BuildContext context) async {
+  final ok = await showDialog<bool>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      title: const Text('データを初期化しますか？', style: TextStyle(fontSize: 18)),
+      content: const Text(
+        '保存されている申請データをすべて破棄し、テストデータ（申請26件）を再投入します。この操作は取り消せません。',
+        style: TextStyle(fontSize: 14.5, height: 1.5),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(ctx).pop(false),
+          child: const Text('キャンセル'),
+        ),
+        ElevatedButton(
+          onPressed: () => Navigator.of(ctx).pop(true),
+          style: ElevatedButton.styleFrom(
+            minimumSize: const Size(0, 46),
+            backgroundColor: AppTheme.statusReturned,
+          ),
+          child: const Text('初期化する'),
+        ),
+      ],
+    ),
+  );
+  if (ok != true || !context.mounted) return;
+
+  final repo = context.read<ExpenseRepository>();
+  final expenses = context.read<ExpenseProvider>();
+  final messenger = ScaffoldMessenger.of(context);
+  try {
+    await repo.resetToSeed();
+    await expenses.load();
+    messenger.showSnackBar(
+      const SnackBar(content: Text('テストデータを初期状態に戻しました')),
+    );
+  } catch (e) {
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text('初期化に失敗しました: $e'),
+        backgroundColor: AppTheme.statusReturned,
       ),
     );
   }

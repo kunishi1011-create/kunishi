@@ -106,4 +106,16 @@ class MockRepository implements ExpenseRepository {
     await _ensureInit();
     _expenses.removeWhere((e) => e.id == id);
   }
+
+  @override
+  Future<void> resetToSeed() async {
+    _users
+      ..clear()
+      ..addAll(SeedData.users());
+    _expenses
+      ..clear()
+      ..addAll(SeedData.expenses());
+    _seq = 100;
+    _initialized = true;
+  }
 }

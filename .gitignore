@@ -63,3 +63,6 @@ firebase-admin-sdk.json
 serve.py
 server.log
 flutter.log
+
+# 自動バックアップzip（誤コミット防止）
+genspark-*.zip

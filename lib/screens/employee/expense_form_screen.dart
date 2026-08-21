@@ -191,7 +191,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
           key: _formKey,
           child: ListView(
             padding: Responsive.pagePadding(context)
-                .copyWith(bottom: 120),
+                .copyWith(bottom: 40),
             children: [
               CenteredContent(
                 maxWidth: 720,
@@ -437,6 +437,12 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
       ),
 
       // 操作ボタンは常に画面下部に固定（スマホで押しやすい）
+      //
+      // ⚠️ ここで縦方向に広がるウィジェット（素の Center など）を使ってはいけない。
+      // Scaffold は bottomNavigationBar を maxHeight = 画面高 の有界制約で測るため、
+      // 縦に広がるウィジェットを置くと bottom bar が画面全高を占有し、
+      // body の高さが 0 になって ListView が子を1つも build しなくなる（白画面）。
+      // CenteredContent は既定で heightFactor: 1.0（広がらない）を保証する。
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
           color: Colors.white,

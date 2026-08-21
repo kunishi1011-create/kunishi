@@ -7,7 +7,7 @@
 | STEP | 内容 | 状態 |
 |---|---|---|
 | STEP1 | 画面・画面遷移（ダミーデータ） | ✅ 完了 |
-| STEP2 | DB接続（永続化・認証・権限） | 未着手 |
+| STEP2 | DB接続（Hive による永続化） | ✅ 完了 |
 | STEP3 | 承認・差し戻し・精算・月次集計 | ✅ STEP1で先行実装 |
 | STEP4 | スマートフォン表示調整 | ✅ STEP1で先行対応 |
 
@@ -16,7 +16,17 @@
 - Flutter 3.35.4 / Dart 3.9.2（Web + Android）
 - 状態管理：provider
 - 日付・数値整形：intl
-- ローカル永続化：hive / shared_preferences（STEP2で使用）
+- ローカル永続化：hive / hive_flutter（Web では IndexedDB に保存）
+
+### データ永続化について（STEP2）
+
+`HiveRepository` が端末内データベースに保存します。申請の作成・編集・削除、承認・差し戻し・精算の結果はブラウザを再読み込みしても保持されます。
+
+- 初回起動時のみテストデータ（社員6名・申請26件）を自動投入します
+- モデルの `toMap()` / `fromMap()` を利用するため、Hive の TypeAdapter 自動生成（build_runner）は不要です
+- 保存形式は JSON 互換の Map なので、将来 Firestore / Supabase へ移行する際もそのまま流用できます
+- 保存データは端末（ブラウザ）ごとに独立します。複数端末でのデータ共有が必要な場合はクラウドDBへの移行が必要です
+- 設定画面の「テストデータを初期状態に戻す」で初期化できます
 
 ## テストユーザー
 
@@ -73,7 +83,8 @@ lib/
 │   └── expense.dart             # expenses テーブル相当
 ├── data/
 │   ├── expense_repository.dart  # 抽象インターフェース ★差し替え点
-│   ├── mock_repository.dart     # STEP1: メモリ上のダミーデータ
+│   ├── mock_repository.dart     # STEP1: メモリ上のダミーデータ（テスト用）
+│   ├── hive_repository.dart     # STEP2: Hive による永続化（現在の既定）
 │   └── seed_data.dart           # 社員6名 + 申請26件
 ├── providers/
 │   ├── auth_provider.dart
@@ -123,4 +134,5 @@ flutter build web --release
 ## 注意事項
 
 - APIキー・パスワードはソースコードに直接記載せず、環境変数を使用します（`.env` は `.gitignore` 済み）
-- STEP1 のデータはメモリ上のみのため、リロードで初期状態に戻ります
+- STEP2 以降のデータは端末内DB（Hive）に保存され、リロードしても保持されます
+- 保存先の切り替えは `lib/main.dart` の1行（`HiveRepository()`）のみで行えます

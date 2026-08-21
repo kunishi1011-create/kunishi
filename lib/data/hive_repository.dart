@@ -91,7 +91,7 @@ class HiveRepository implements ExpenseRepository {
 
   // ------------------------------------------------------------- helpers
 
-  /// Hive から読み出した Map<dynamic, dynamic> を安全に変換する。
+  /// Hive から読み出した動的キーの Map を、キーを String に揃えて変換する。
   static Map<String, dynamic> _normalize(Map<dynamic, dynamic> raw) {
     return raw.map((k, v) => MapEntry(k.toString(), v));
   }

@@ -1,11 +1,11 @@
 {
-    "name": "kunishi_expense",
-    "short_name": "kunishi_expense",
+    "name": "KUNISHI経費精算",
+    "short_name": "KUNISHI経費精算",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#1F4E79",
+    "theme_color": "#1F4E79",
+    "description": "社内向け経費精算システム（プロトタイプ）",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
